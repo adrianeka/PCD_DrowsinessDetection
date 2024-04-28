@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Digital Image Processing</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+      .content{
+        margin-left: 400px;
+        padding: 20px;
+      }
+      .navbar{
+        z-index: 1000;
+      }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 400px;
+        background-color: #f8f9fa;
+        padding-top: 50px;
+        z-index: 900;
+        overflow-y: auto;
+      }
+
+      .sidebar form {
+        padding: 10px 15px;
+        display: block;
+        text-decoration: none;
+        color: #000;
+      }
+
+      .sidebar form:hover {
+        background-color: #e9ecef; 
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    {% include "includes/_navbar.html" %}
+    <div class="sidebar">
+      <div class="container">
+        <h3>Umum</h3>
+        <div class="row">
+          <div class="col-6">
+              <form id="form_normal" action="{{ url_for('normal') }}" method="POST" enctype="multipart/form-data">
+                  <button type="submit" class="btn btn-primary btn-block">Normal</button>
+              </form>
+          </div>
+          <div class="col-6">
+              <form id="form_grayscale" action="{{ url_for('grayscale') }}" method="POST" enctype="multipart/form-data">
+                  <button type="submit" class="btn btn-primary btn-block">Grayscale</button>
+              </form>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+              <form id="form_zoomin" action="{{ url_for('zoomin') }}" method="POST" enctype="multipart/form-data">
+                  <button type="submit" class="btn btn-primary btn-block">Zoom In</button>
+              </form>
+          </div>
+          <div class="col-6">
+              <form id="form_zoomout" action="{{ url_for('zoomout') }}" method="POST" enctype="multipart/form-data">
+                  <button type="submit" class="btn btn-primary btn-block">Zoom Out</button>
+              </form>
+          </div>
+        </div><hr>
+        <h3>Pergeseran</h3>
+        <div class="row">
+          <div class="col-6">
+            <form id="" action="{{ url_for('move_left') }}" method="POST" enctype="multipart/form-data">
+              <button type="submit" class="btn btn-primary">Geser Kiri</button>
+            </form>
+          </div>
+          <div class="col-6">
+            <form id="" action="{{ url_for('move_right') }}" method="POST" enctype="multipart/form-data">
+              <button type="submit" class="btn btn-primary">Geser Kanan</button>
+            </form>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <form id="" action="{{ url_for('move_up') }}" method="POST" enctype="multipart/form-data">
+              <button type="submit" class="btn btn-primary">Geser Atas</button>
+            </form>
+          </div>
+          <div class="col-6">
+            <form id="" action="{{ url_for('move_down') }}" method="POST" enctype="multipart/form-data">
+              <button type="submit" class="btn btn-primary">Geser Bawah</button>
+            </form>
+          </div>
+        </div><hr>
+        <h3>Penerangan</h3>
+        <div class="row">
+          <div class="col-6">
+            <form id="" action="{{ url_for('brightness_multiplication') }}" method="POST" enctype="multipart/form-data">
+              <button type="submit" class="btn btn-primary">Terang (*)</button>
+            </form>
+          </div>
+          <div class="col-6">
+            <form id="" action="{{ url_for('brightness_division') }}" method="POST" enctype="multipart/form-data"> 
+              <button type="submit" class="btn btn-primary">Gelap (/)</button> 
+            </form>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <form id="" action="{{ url_for('brightness_addition') }}" method="POST" enctype="multipart/form-data"> 
+              <button type="submit" class="btn btn-primary">Terang (+)</button> 
+            </form>
+          </div>
+          <div class="col-6">
+            <form id="" action="{{ url_for('brightness_substraction') }}" method="POST" enctype="multipart/form-data"> 
+              <button type="submit" class="btn btn-primary">Gelap (-)</button> 
+            </form>
+          </div>
+        </div><hr>
+        <h3>Analisis Gambar </h3>
+        <form id="" action="{{ url_for('histogram_rgb') }}" method="POST" enctype="multipart/form-data">
+          <button type="submit" class="btn btn-primary">Histogram</button>
+        </form><hr>
+        <h3>Pemrosesan Gambar</h3>
+        <form id="" action="{{ url_for('histogram_equalizer') }}" method="POST" enctype="multipart/form-data">
+          <button type="submit" class="btn btn-primary">Histogram Equalizer</button>
+        </form><hr>
+        <h3>Filter Gambar</h3>
+        <form id="" action="{{ url_for('edge_detection') }}" method="POST" enctype="multipart/form-data">
+          <button type="submit" class="btn btn-primary">Edge Detection</button>
+        </form>
+        <form id="" action="{{ url_for('blur') }}" method="POST" enctype="multipart/form-data">
+          <button type="submit" class="btn btn-primary">Blur</button>
+        </form>
+        <form id="" action="{{ url_for('sharpening') }}" method="POST" enctype="multipart/form-data">
+          <button type="submit" class="btn btn-primary">Sharpening</button>
+        </form><hr>
+        <h3>Segmentation</h3>
+        <form id="" action="{{ url_for('thresholding') }}" method="POST" enctype="multipart/form-data">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                  <th>Batas Bawah</th>
+                  <th>Batas Atas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                  <td><input type="number" name="lower_thres" placeholder="0-255"></td>
+                  <td><input type="number" name="upper_thres" placeholder="0-255"></td>
+              </tr>
+              <tr>
+                  <td colspan="3"><button type="submit" class="btn btn-primary">Thresholding</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+    </div>
+    <div class="container content">
+      {% block body %}{% endblock %}
+    </div>
+  </body>
+</html>
