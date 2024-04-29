@@ -43,21 +43,21 @@
     {% include "includes/_navbar.html" %}
     <div class="sidebar">
       <div class="container">
-        <h3>Umum</h3>
+        <h3 class="mt-3">Umum</h3>
         <div class="row">
           <div class="col-4">
               <form id="form_normal" action="{{ url_for('normal') }}" method="POST" enctype="multipart/form-data">
-                  <button type="submit" class="btn btn-primary btn-block">Normal</button>
+                  <button type="submit" class="btn btn-primary">Normal</button>
               </form>
           </div>
           <div class="col-4">
               <form id="form_grayscale" action="{{ url_for('grayscale') }}" method="POST" enctype="multipart/form-data">
-                  <button type="submit" class="btn btn-primary btn-block">Grayscale</button>
+                  <button type="submit" class="btn btn-primary">Grayscale</button>
               </form>
           </div>
           <div class="col-4">
             <form id="form_binary" action="{{ url_for('binary') }}" method="POST" enctype="multipart/form-data">
-                <button type="submit" class="btn btn-primary btn-block">Binary</button>
+                <button type="submit" class="btn btn-primary">Binary</button>
             </form>
         </div>
         </div>
