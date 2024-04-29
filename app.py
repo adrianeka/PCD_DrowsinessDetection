@@ -11,7 +11,6 @@ app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-
 def nocache(view):
     @wraps(view)
     def no_cache(*args, **kwargs):
@@ -193,7 +192,49 @@ def thresholding():
     lower_thres = int(request.form['lower_thres'])
     upper_thres = int(request.form['upper_thres'])
     image_processing.threshold(lower_thres, upper_thres)
+    return render_template("uploaded.html", file_path="img/img_now.jpg", lower_thres=lower_thres, upper_thres=upper_thres)
+
+
+@app.route("/binary", methods=["POST"])
+@nocache
+def binary():
+    image_processing.binary()
     return render_template("uploaded.html", file_path="img/img_now.jpg")
+
+
+@app.route("/dilation", methods=["POST"])
+@nocache
+def dilation():
+    image_processing.dilation()
+    return render_template("uploaded.html", file_path="img/img_now.jpg")
+
+
+@app.route("/erosion", methods=["POST"])
+@nocache
+def erosion():
+    image_processing.erosion()
+    return render_template("uploaded.html", file_path="img/img_now.jpg")
+
+
+@app.route("/opening", methods=["POST"])
+@nocache
+def opening():
+    image_processing.opening()
+    return render_template("uploaded.html", file_path="img/img_now.jpg")
+
+
+@app.route("/closing", methods=["POST"])
+@nocache
+def closing():
+    image_processing.closing()
+    return render_template("uploaded.html", file_path="img/img_now.jpg")
+
+
+@app.route("/counting_object", methods=["POST"])
+@nocache
+def counting_object():
+    num_blobs = image_processing.counting_object()
+    return render_template("uploaded.html", file_path="img/img_now.jpg", data=num_blobs)
 
 
 if __name__ == '__main__':

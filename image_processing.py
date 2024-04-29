@@ -291,12 +291,89 @@ def histogram_equalizer():
 
 
 def threshold(lower_thres, upper_thres):
-    img = Image.open("static/img/img_now.jpg")
-    img_arr = np.asarray(img)
-    condition = np.logical_and(np.greater_equal(img_arr, lower_thres),
-                               np.less_equal(img_arr, upper_thres))
-    print(lower_thres, upper_thres)
-    img_arr.setflags(write=1)
-    img_arr[condition] = 255
-    new_img = Image.fromarray(img_arr)
-    new_img.save("static/img/img_now.jpg")
+    img = cv2.imread("static/img/img_now.jpg")
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    _, thresholded = cv2.threshold(gray, lower_thres, upper_thres, cv2.THRESH_BINARY)
+    cv2.imwrite("static/img/img_now.jpg", thresholded)
+
+
+def threshold(lower_thres, upper_thres):
+    img_path = "static/img/img_now.jpg"
+    if not is_grey_scale(img_path):
+        grayscale()  # Mengubah citra menjadi grayscale terlebih dahulu
+        
+    img = cv2.imread(img_path, 0)
+    _, thresholded = cv2.threshold(img, lower_thres, upper_thres, cv2.THRESH_BINARY)
+    cv2.imwrite(img_path, thresholded)
+
+
+def is_binary(img_path):
+    img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+    unique_values = np.unique(img)
+    return len(unique_values) == 2 and 0 in unique_values and 255 in unique_values
+
+
+def binary():
+    img_path = "static/img/img_now.jpg"
+
+    if not is_grey_scale(img_path):
+        grayscale()  # Mengubah citra menjadi grayscale terlebih dahulu
+
+    img = cv2.imread("static/img/img_now.jpg", 0)
+    _, binary_img = cv2.threshold(img, 128, 255, cv2.THRESH_OTSU)
+    cv2.imwrite("static/img/img_now.jpg", binary_img)
+
+
+def dilation():
+    binary()
+    img = cv2.imread("static/img/img_now.jpg", 0)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    dilated = cv2.dilate(img, kernel, iterations=1)
+    cv2.imwrite("static/img/img_now.jpg", dilated)
+
+
+def erosion():
+    binary()
+    img = cv2.imread("static/img/img_now.jpg", 0)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    eroded = cv2.erode(img, kernel, iterations=1)
+    cv2.imwrite("static/img/img_now.jpg", eroded)
+
+
+def opening():
+    binary()
+    img = cv2.imread("static/img/img_now.jpg", 0)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    opened = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+    cv2.imwrite("static/img/img_now.jpg", opened)
+
+
+def closing():
+    binary()
+    img = cv2.imread("static/img/img_now.jpg", 0)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    closed = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+    cv2.imwrite("static/img/img_now.jpg", closed)
+
+
+def counting_object():
+    crack =  cv2.imread("static/img/img_now.jpg")
+
+    binary()
+    crack_binary = cv2.imread("static/img/img_now.jpg", 0)
+
+    full_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+
+    crack_final = cv2.morphologyEx(crack_binary, cv2.MORPH_OPEN, full_kernel)
+    crack_final = cv2.erode(crack_final, full_kernel, iterations=3)
+    crack_final = cv2.dilate(crack_final, full_kernel, iterations=1)
+
+    contours, _ = cv2.findContours(crack_final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    crack_with_contours = crack.copy()
+    cv2.drawContours(crack_with_contours, contours, -1, (0, 255, 0), 2)
+    cv2.imwrite("static/img/img_now.jpg", crack_with_contours)
+
+    num_blobs = len(contours)
+    
+    return num_blobs

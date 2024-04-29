@@ -45,16 +45,21 @@
       <div class="container">
         <h3>Umum</h3>
         <div class="row">
-          <div class="col-6">
+          <div class="col-4">
               <form id="form_normal" action="{{ url_for('normal') }}" method="POST" enctype="multipart/form-data">
                   <button type="submit" class="btn btn-primary btn-block">Normal</button>
               </form>
           </div>
-          <div class="col-6">
+          <div class="col-4">
               <form id="form_grayscale" action="{{ url_for('grayscale') }}" method="POST" enctype="multipart/form-data">
                   <button type="submit" class="btn btn-primary btn-block">Grayscale</button>
               </form>
           </div>
+          <div class="col-4">
+            <form id="form_binary" action="{{ url_for('binary') }}" method="POST" enctype="multipart/form-data">
+                <button type="submit" class="btn btn-primary btn-block">Binary</button>
+            </form>
+        </div>
         </div>
         <div class="row">
           <div class="col-6">
@@ -67,7 +72,10 @@
                   <button type="submit" class="btn btn-primary btn-block">Zoom Out</button>
               </form>
           </div>
-        </div><hr>
+        </div>
+
+        <hr>
+
         <h3>Pergeseran</h3>
         <div class="row">
           <div class="col-6">
@@ -92,7 +100,10 @@
               <button type="submit" class="btn btn-primary">Geser Bawah</button>
             </form>
           </div>
-        </div><hr>
+        </div>
+
+        <hr>
+
         <h3>Penerangan</h3>
         <div class="row">
           <div class="col-6">
@@ -117,15 +128,24 @@
               <button type="submit" class="btn btn-primary">Gelap (-)</button> 
             </form>
           </div>
-        </div><hr>
+        </div>
+
+        <hr>
+
         <h3>Analisis Gambar </h3>
         <form id="" action="{{ url_for('histogram_rgb') }}" method="POST" enctype="multipart/form-data">
           <button type="submit" class="btn btn-primary">Histogram</button>
-        </form><hr>
+        </form>
+
+        <hr>
+
         <h3>Pemrosesan Gambar</h3>
         <form id="" action="{{ url_for('histogram_equalizer') }}" method="POST" enctype="multipart/form-data">
           <button type="submit" class="btn btn-primary">Histogram Equalizer</button>
-        </form><hr>
+        </form>
+
+        <hr>
+
         <h3>Filter Gambar</h3>
         <form id="" action="{{ url_for('edge_detection') }}" method="POST" enctype="multipart/form-data">
           <button type="submit" class="btn btn-primary">Edge Detection</button>
@@ -135,7 +155,10 @@
         </form>
         <form id="" action="{{ url_for('sharpening') }}" method="POST" enctype="multipart/form-data">
           <button type="submit" class="btn btn-primary">Sharpening</button>
-        </form><hr>
+        </form>
+        
+        <hr>
+
         <h3>Segmentation</h3>
         <form id="" action="{{ url_for('thresholding') }}" method="POST" enctype="multipart/form-data">
           <table class="table table-sm">
@@ -147,8 +170,8 @@
             </thead>
             <tbody>
               <tr>
-                  <td><input type="number" name="lower_thres" placeholder="0-255"></td>
-                  <td><input type="number" name="upper_thres" placeholder="0-255"></td>
+                  <td><input type="number" name="lower_thres" placeholder="0-255" value="{{ lower_thres }}"></td>
+                  <td><input type="number" name="upper_thres" placeholder="0-255" value="{{ upper_thres }}"></td>
               </tr>
               <tr>
                   <td colspan="3"><button type="submit" class="btn btn-primary">Thresholding</button></td>
@@ -156,6 +179,44 @@
             </tbody>
           </table>
         </form>
+
+        <h3>Operasi Morfologi</h3>
+        <div class="row">
+          <div class="col-6">
+            <form id="" action="{{ url_for('dilation') }}" method="POST" enctype="multipart/form-data">
+              <button type="submit" class="btn btn-primary">Dilasi</button>
+            </form>
+          </div>
+          <div class="col-6">
+            <form id="" action="{{ url_for('erosion') }}" method="POST" enctype="multipart/form-data">
+              <button type="submit" class="btn btn-primary">Erosi</button>
+            </form>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <form id="" action="{{ url_for('opening') }}" method="POST" enctype="multipart/form-data">
+              <button type="submit" class="btn btn-primary">Opening</button>
+            </form>
+          </div>
+          <div class="col-6">
+            <form id="" action="{{ url_for('closing') }}" method="POST" enctype="multipart/form-data">
+              <button type="submit" class="btn btn-primary">Closing</button>
+            </form>
+          </div>
+        </div>
+
+        <hr>
+
+        <h3>Counting Object</h3>
+        <div class="row">
+          <div class="col-12">
+            <form id="" action="{{ url_for('counting_object') }}" method="POST" enctype="multipart/form-data">
+              <button type="submit" class="btn btn-primary">Hitung Objek</button>
+            </form>
+          </div>
+        </div>
+
       </div>
     </div>
     <div class="container content">

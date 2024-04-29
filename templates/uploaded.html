@@ -13,6 +13,9 @@
                     <div class="col-lg-12">
                         <h3>After</h3>
                         <img class="img-fluid" src="{{ url_for('static', filename=file_path) }}" alt="After Image">
+                        {% if data %}
+                            <p>Number of blobs: {{ data }}</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
