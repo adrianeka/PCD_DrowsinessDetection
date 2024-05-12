@@ -5,6 +5,8 @@ import math
 from collections import Counter
 from pylab import savefig
 import cv2
+import json
+
 
 
 def grayscale():
@@ -377,3 +379,126 @@ def counting_object():
     num_blobs = len(contours)
     
     return num_blobs
+
+def freeman_chain_code2(contour):
+    chain_code = []
+    prev_point = contour[0][0]
+    
+    for point in contour[1:]:
+        x, y = point[0]
+        dx = x - prev_point[0]
+        dy = y - prev_point[1]
+        
+        # Calculate the angle in degrees
+        angle = np.degrees(np.arctan2(dy, dx))
+        
+        # Convert the angle to Freeman Chain Code (numerical values)
+        code = round((angle % 360) / 45) % 8
+        chain_code.append(code)
+        
+        prev_point = point[0]
+    
+    return chain_code
+
+def read_binary(input_image_path):
+    # Load the image
+    image = cv2.imread(input_image_path)
+    image = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+
+    if image is None:
+        print("Error: Unable to read the image.")
+        return
+
+    # Apply Otsu's thresholding
+    _, binary_image = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+
+    return binary_image
+
+def get_contour(binary_image):
+    
+    contours, _ = cv2.findContours(
+        binary_image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    return contours
+
+def FCC(binary_image):
+    contours = get_contour(binary_image)
+    for contour in contours:
+        result = freeman_chain_code2(contour)
+        print(f'result {result}')
+        return result
+        
+def invert_binary_image(binary_image):
+    # Invert the binary image using the NOT operation
+    inverted_image = cv2.bitwise_not(binary_image)
+    return inverted_image
+
+def thinning_image(image):
+    # Apply thinning operation (Zhang-Suen algorithm)
+    thinning_image = cv2.ximgproc.thinning(image, thinningType=cv2.ximgproc.THINNING_ZHANGSUEN)
+    return thinning_image
+
+def calculate_similarity(chain_code1, chain_code2):
+    # Calculate the similarity between two FCCs
+    length1 = len(chain_code1)
+    length2 = len(chain_code2)
+
+    # Pad the shorter chain code with zeros to match the length of the longer chain code
+    if length1 < length2:
+        chain_code1 = chain_code1 + [0] * (length2 - length1)
+    elif length1 > length2:
+        chain_code2 = chain_code2 + [0] * (length1 - length2)
+
+    return np.sum(np.array(chain_code1) == np.array(chain_code2))
+
+def recognize_digit(input_chain_code, knowledge_base):
+    best_match = None
+    best_similarity = 0
+
+    for digit, data in knowledge_base.items():
+        for stored_chain_code in data["FCC_8_Directions"]:
+            for input_code in input_chain_code:
+                similarity = calculate_similarity(input_code, stored_chain_code)
+                if similarity > best_similarity:
+                    best_similarity = similarity
+                    best_match = digit
+
+    return best_match
+
+def number_recognition():
+    img_path = "static/img/img_now.jpg"
+
+    with open("knowledge_base.json", "r") as file:
+        knowledge_base = json.load(file)
+
+    # Read and process the image
+    binary_image = invert_binary_image(read_binary(img_path))
+    contours = get_contour(binary_image)
+
+    recognized_digits = []
+
+    # Create a dictionary to map the position of contours to their FCC
+    contour_position_mapping = {}
+    for contour in contours:
+        # Calculate FCC in 8 directions for each contour
+        fcc_8_directions = freeman_chain_code2(contour)
+
+        # Determine the position (e.g., x-coordinate) of the contour
+        position = contour[0][0][0]  # Assuming x-coordinate is at index 0
+            
+        contour_position_mapping[position] = fcc_8_directions
+
+        # Sort the contours based on their positions
+    sorted_contours = sorted(contour_position_mapping.items())
+
+    for _, fcc_8_directions in sorted_contours:
+        recognized_digit = recognize_digit([fcc_8_directions], knowledge_base)
+
+        if recognized_digit is not None:
+            recognized_digits.append(recognized_digit)
+
+    if recognized_digits:
+        recognized_result = ''.join(map(str, recognized_digits))
+        return recognized_result
+    else:
+        return "Digit recognition failed for {img_path}. No matching digits found in the knowledge base."
