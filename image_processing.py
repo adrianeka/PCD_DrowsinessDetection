@@ -6,8 +6,8 @@ from collections import Counter
 from pylab import savefig
 import cv2
 import json
-
-
+import torch
+import logging
 
 def grayscale():
     img = Image.open("static/img/img_now.jpg")
@@ -502,3 +502,38 @@ def number_recognition():
         return recognized_result
     else:
         return "Digit recognition failed for {img_path}. No matching digits found in the knowledge base."
+    
+def face_recognition(frame):
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path='weights/last.pt', force_reload=True)
+    results = model(frame)
+    frame = np.squeeze(results.render())
+    return frame
+
+def generate_frames():    
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path='weights/last.pt', force_reload=True)
+    logging.basicConfig(level=logging.INFO)
+    camera = cv2.VideoCapture(0)
+
+    if not camera.isOpened():
+        logging.error("Cannot open camera")
+        return
+
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    if face_cascade.empty():
+        logging.error("Failed to load cascade classifier")
+        return
+
+    while True:
+        success, frame = camera.read()
+        if not success:
+            break
+        else:
+            results = model(frame)
+            # Render results on the frame
+            frame = np.squeeze(results.render())
+
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+

@@ -2,10 +2,12 @@
 from PIL import Image
 import image_processing
 import os
-from flask import Flask, render_template, request, make_response
+from flask import Flask, render_template, request, make_response, Response
 from datetime import datetime
 from functools import wraps, update_wrapper
 from shutil import copyfile
+import cv2
+import logging
 
 app = Flask(__name__)
 
@@ -242,5 +244,17 @@ def number_recognition():
     result = image_processing.number_recognition()
     return render_template("uploaded.html", result=result, file_path="img/img_now.jpg")
     
+
+@app.route("/face_rec")
+@nocache
+def face_rec():
+    return render_template("face_rec.html")
+
+
+@app.route("/video_feed")
+@nocache
+def video_feed():
+    return Response(image_processing.generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

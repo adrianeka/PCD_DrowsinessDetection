@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Drowsiness Detection</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background: #f0f0f0;
+      }
+      .video-feed {
+        border: 5px solid #444;
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Live Emotion Detection</h1>
+    <img
+      src="{{ url_for('video_feed') }}"
+      class="video-feed"
+      alt="Video Feed"
+    />
+  </body>
+</html>
